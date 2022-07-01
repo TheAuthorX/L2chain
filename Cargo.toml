@@ -6,5 +6,7 @@ members = [
     "core",
     "chain",
     "common-utils",
-    "baseline"
+    "baseline",
+    "tx-engine",
+    "tx-engine-tee"
 ]

@@ -97,49 +97,47 @@ pub async fn node_main() -> Result<()> {
                     bail!("Executor is not implemented for baseline PoW network!");
                 }
                 Role::Validator => {
-                    bail!("Not implemented");
-                    // let miner_cfg: MinerConfig = cfg.get("miner")?;
-                    // info!("Miner Cfg: {:#?}", miner_cfg);
-                    // let behavior =
-                    //     MinerBehavior::<Tx>::new(db, &chain_cfg, &miner_cfg, &net_cfg).await?;
-                    // let swarmer =
-                    //     Swarmer::new(net_cfg.keypair.to_libp2p_keypair(), behavior).await?;
-                    // let ctrl = swarmer.spawn_app(&net_cfg.listen).await?;
-                    // ctrl.run_until_interrupt().await?;
+                    let miner_cfg: MinerConfig = cfg.get("miner")?;
+                    info!("Miner Cfg: {:#?}", miner_cfg);
+                    let behavior =
+                        MinerBehavior::<Tx>::new(db, &chain_cfg, &miner_cfg, &net_cfg).await?;
+                    let swarmer =
+                        Swarmer::new(net_cfg.keypair.to_libp2p_keypair(), behavior).await?;
+                    let ctrl = swarmer.spawn_app(&net_cfg.listen).await?;
+                    ctrl.run_until_interrupt().await?;
                 }
             }
         }
         Consensus::Raft => {
-            print!("Not implemented");
-            // use crate::network::raft::{client::ClientNode, storage::StorageNode};
-            // use slimchain_network::http::config::{NetworkConfig, RaftConfig};
+            use crate::network::raft::{client::ClientNode, storage::StorageNode};
+            use network::http::config::{NetworkConfig, RaftConfig};
 
-            // let net_cfg: NetworkConfig = cfg.get("network")?;
-            // let raft_cfg: RaftConfig = cfg.get("raft")?;
+            let net_cfg: NetworkConfig = cfg.get("network")?;
+            let raft_cfg: RaftConfig = cfg.get("raft")?;
 
-            // match role {
-            //     Role::Client(_) => {
-            //         let miner_cfg: MinerConfig = cfg.get("miner")?;
-            //         println!("Miner Cfg: {:#?}", miner_cfg);
-            //         let mut client: ClientNode<Tx> =
-            //             ClientNode::new(db, &chain_cfg, &miner_cfg, &net_cfg, &raft_cfg).await?;
-            //             println!("Press Ctrl-C to quit.");
-            //         tokio::signal::ctrl_c().await?;
-            //         println!("Quitting.");
-            //         client.shutdown().await?;
-            //     }
-            //     Role::Storage(_) => {
-            //         let engine = create_tx_engine(&cfg, &opts.enclave)?;
-            //         let mut storage = StorageNode::new(db, engine, &chain_cfg, &net_cfg).await?;
-            //         println!("Press Ctrl-C to quit.");
-            //         tokio::signal::ctrl_c().await?;
-            //         println!("Quitting.");
-            //         storage.shutdown().await?;
-            //     }
-            //     Role::Miner => {
-            //         bail!("Role cannot be miner.");
-            //     }
-            // }
+            match role {
+                Role::Client(_) => {
+                    let miner_cfg: MinerConfig = cfg.get("miner")?;
+                    println!("Miner Cfg: {:#?}", miner_cfg);
+                    let mut client: ClientNode<Tx> =
+                        ClientNode::new(db, &chain_cfg, &miner_cfg, &net_cfg, &raft_cfg).await?;
+                        println!("Press Ctrl-C to quit.");
+                    tokio::signal::ctrl_c().await?;
+                    println!("Quitting.");
+                    client.shutdown().await?;
+                }
+                Role::Executor(_)=> {
+                    let engine = create_tx_engine(&cfg, &opts.enclave)?;
+                    let mut storage = StorageNode::new(db, engine, &chain_cfg, &net_cfg).await?;
+                    println!("Press Ctrl-C to quit.");
+                    tokio::signal::ctrl_c().await?;
+                    println!("Quitting.");
+                    storage.shutdown().await?;
+                }
+                Role::Validator => {
+                    bail!("Role cannot be miner.");
+                }
+            }
         }
     }
 

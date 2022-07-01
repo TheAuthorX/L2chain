@@ -35,7 +35,7 @@ min_txs = 1
 # Max time span used in collecting txs in milliseconds.
 max_block_interval = 2000
 
-# Configure used in TEE. Used by storage nodes with TEE only.
+# Configure used in TEE.
 # Obtain keys from https://api.portal.trustedservices.intel.com/EPID-attestation
 [tee]
 # Subscription Key that provides access to the Intel API
