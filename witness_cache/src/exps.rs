@@ -11,7 +11,7 @@ pub fn upd_witness_after_addition(NEW_STATE_COUNT: usize, STATE_COUNT: usize, NU
     // Add all states (key-value pairs) into the accumulator.
     let mut states: Vec<&str> = Vec::new();
     for i in 0..STATE_COUNT {
-        states.push("fuck"); //(format!("{} : {}", i, i));
+        states.push(format!("{} : {}", i, i));
     }
     // let states: Vec<&'static str> = states.iter().map(|s| s as &'static str).collect();
 

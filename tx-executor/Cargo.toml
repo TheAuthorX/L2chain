@@ -1,0 +1,18 @@
+[package]
+name = "tx-executor"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[features]
+default = ["std"]
+std = [
+    "evm/std",
+    "serde/std",
+    "core/std",
+]
+
+[dependencies]
+evm = { version = "0.30", default-features = false }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
+core = { path = "../core", default-features = false }
